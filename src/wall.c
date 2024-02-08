@@ -48,3 +48,35 @@ void renderFloor(int wallBottomPixel, color_t *texelColor, int x)
     drawPixel(x, y, *texelColor);
   }
 }
+
+/**
+ * renderCeil - render Ceil projection
+ * @WallTopPixel: wall top pixel
+ * @texelColor: texture color for current pixel
+ * @x: current element in the rays array
+ */
+
+void renderCeil(int wallTopPixel, color_t *texelColor, int x)
+{
+  int y, texture_width, texture_height, textureOffsetY, textureOffsetX;
+
+  texture_width = wallTextures[3].width;
+  texture_height = wallTextures[3].height;
+
+  for (y = 0; y < wallTopPixel; y++)
+  {
+    float distance, ratio;
+
+    ratio = player.height / (y - SCREEN_HEIGHT / 2);
+    distance = (ratio * PROJ_PLANE) / cos(rays[x].rayAngle - player.rotationAngle);
+
+    textureOffsetY = (int)abs((-distance * sin(rays[x].rayAngle)) + player.y);
+    textureOffsetX = (int)abs((-distance * cos(rays[x].rayAngle)) + player.x);
+
+    textureOffsetX = (int)(abs(textureOffsetX * texture_width / 40) % texture_width);
+    textureOffsetY = (int)(abs(textureOffsetY * texture_height / 40) % texture_height);
+
+    *texelColor = wallTextures[6].texture_buffer[(texture_width * textureOffsetY) + textureOffsetX];
+    drawPixel(x, y, *texelColor);
+  }
+}
